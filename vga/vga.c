@@ -25,10 +25,10 @@
 #define	VGA_NUM_SEQ_REGS    5
 
 /********************************
- *      VRAM Address            *
+ *      vram Address            *
  ********************************/
 
-static u8* VRAM = (u8 *) 0xA0000;
+static u8* vram = (u8 *) 0xA0000;
 
 /**
  * Backbuffer
@@ -49,21 +49,21 @@ static unsigned int bytes;
  *      Private Functions       *
  ********************************/
 
-static void initRegs(const ExternalGeneral* ext, const Sequencer* seq, CRTController* crtc, 
-                    const GraphicsController* gfxc, const AttributeController* attrc);
+static void init_regs(const external_general* ext, const sequencer* seq, crt_controller* crtc, 
+                    const gfx_controller* gfxc, const attribute_controller* attrc);
 
 /********************************
  *      Public Driver API       *
  ********************************/
  
-void xvInitGfxMode(int mode) {
+void xv_init_gfx_mode(int mode) {
     switch (mode) {
         case MODE03H:
             width = 80;
             height = 25;
             bytes = 2000;
 
-            initRegs(&extRegs03, 
+            init_regs(&extRegs03, 
                     &seqRegs03, 
                     &crtcRegs03, 
                     &gfxcRegs03, 
@@ -74,7 +74,7 @@ void xvInitGfxMode(int mode) {
             height = 200;
             bytes = 64000;
             
-            initRegs(&extRegs13, 
+            init_regs(&extRegs13, 
                     &seqRegs13, 
                     &crtcRegs13, 
                     &gfxcRegs13, 
@@ -85,7 +85,7 @@ void xvInitGfxMode(int mode) {
             height = 480;
             bytes = 38400;
             
-            initRegs(&extRegs12, 
+            init_regs(&extRegs12, 
                     &seqRegs12, 
                     &crtcRegs12, 
                     &gfxcRegs12, 
@@ -95,51 +95,51 @@ void xvInitGfxMode(int mode) {
             break;
     }
 
-    xvclroffscreen(0x00);
+    xv_clr_offscreen(0x00);
 }
 
-void xvPlotPixel(int x, int y, unsigned short color) {
+void xv_plot_pixel(int x, int y, unsigned short color) {
     unsigned short offset = width * y + x;
-    VRAM[offset] = color;
+    vram[offset] = color;
 }
 
-void xvPlotPixelf(int x, int y, unsigned short color) {
+void xv_plot_pixelf(int x, int y, unsigned short color) {
     unsigned short offset = width * y + x;
     offscreen[offset] = color;
 }
 
-void xvclrscreen(unsigned short color) {
+void xv_clr_screen(unsigned short color) {
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
-            xvPlotPixel(i, j, color);
+            xv_plot_pixel(i, j, color);
         }
     }
 }
 
-void xvclroffscreen(unsigned short color) {
+void xv_clr_offscreen(unsigned short color) {
     for (int i = 0; i < bytes; ++i) {
         offscreen[i] = color;
     }
 }
 
-void xvWaitVRetrace() {
+void xv_wait_vretrace() {
     while (insb(VGA_STATUS_READ) & 0x08);
     while (!(insb(VGA_STATUS_READ) & 0x08)); 
 }
 
-void xvSwapBuffers() {
-    xvWaitVRetrace();
+void xv_swap_buffers() {
+    xv_wait_vretrace();
 
     for (int i = 0; i < bytes; ++i) {
-        VRAM[i] = offscreen[i];
+        vram[i] = offscreen[i];
     }
 }
 
-void initRegs(const ExternalGeneral* ext, const Sequencer* seq, CRTController* crtc, 
-            const GraphicsController* gfxc, const AttributeController* attrc) {
+void init_regs(const external_general* ext, const sequencer* seq, crt_controller* crtc, 
+            const gfx_controller* gfxc, const attribute_controller* attrc) {
 	// write MISCELLANEOUS reg
-    outb(VGA_MISC_WRITE, ext->miscOutput);
-    // write SEQUENCER regs
+    outb(VGA_MISC_WRITE, ext->misc_output);
+    // write sequencer regs
     for (int i = 0; i < VGA_NUM_SEQ_REGS; ++i) {
         outb(VGA_SEQ_INDEX, i);
         outb(VGA_SEQ_DATA, seq->m[i]);
@@ -151,8 +151,8 @@ void initRegs(const ExternalGeneral* ext, const Sequencer* seq, CRTController* c
     outb(VGA_CRTC_INDEX, 0x11);
     outb(VGA_CRTC_DATA, insb(VGA_CRTC_DATA) & ~0x80);
     // make sure they remain unlocked
-    crtc->endHorizontalBlanking |= 0x80;
-    crtc->verticalRetraceEnd &= ~0x80;
+    crtc->end_horizontal_blanking |= 0x80;
+    crtc->vertical_retrace_end &= ~0x80;
     // write CRTC regs
     for (int i = 0; i < VGA_NUM_CRTC_REGS; ++i) {
         outb(VGA_CRTC_INDEX, i);

@@ -26,18 +26,18 @@ enum COLORS {
     WHITE
 };
 
-void xvInitGfxMode(int mode);
+void xv_init_gfx_mode(int mode);
 
-void xvPlotPixel(int x, int y, unsigned short color);
+void xv_plot_pixel(int x, int y, unsigned short color);
 
-void xvPlotPixelf(int x, int y, unsigned short color);
+void xv_plot_pixelf(int x, int y, unsigned short color);
 
-void xvclrscreen(unsigned short color);
+void xv_clr_screen(unsigned short color);
 
-void xvclroffscreen(unsigned short color);
+void xv_clr_offscreen(unsigned short color);
 
-void xvWaitVRetrace();
+void xv_wait_vretrace();
 
-void xvSwapBuffers();
+void xv_swap_buffers();
 
 #endif

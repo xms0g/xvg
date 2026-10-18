@@ -20,27 +20,27 @@ Example Usage:
 #include "sgl.h"
 
 void main() {
-    xvInitGfxMode(MODE13H);
+    xv_init_gfx_mode(MODE13H);
 
-    sglClear(BLACK);
+    sgl_clear(BLACK);
 
-    sglDrawRect(150, 10, 100, 50, GREEN);
+    sgl_draw_rect(150, 10, 100, 50, GREEN);
 
-    sglDrawLine(120, 14, 24, 30, RED);
+    sgl_draw_line(120, 14, 24, 30, RED);
 
-    sglDrawCircle(100,100,50, CYAN);
+    sgl_draw_circle(100,100,50, CYAN);
 
-    sglDrawFilledTri(100, 100, 50, 150, 120, 120, MAGENTA);
+    sgl_draw_filled_tri(100, 100, 50, 150, 120, 120, MAGENTA);
 
-    sglDrawTri(200, 100, 150, 170, 250, 190, YELLOW);
+    sgl_draw_tri(200, 100, 150, 170, 250, 190, YELLOW);
     
     for (int i = 0; i < 15; i++) {
         for (int j = 0; j < 100; j++) {
-            sglPutPixel(i, 50 + j, i);
+            sgl_put_pixel(i, 50 + j, i);
         }
     }
 
-    sglSwapBuffers();
+    sgl_swap_buffers();
 }
 ```
 ## License

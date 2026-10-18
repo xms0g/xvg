@@ -19,27 +19,27 @@
 
 static void circle(int xc, int yc, int x, int y, unsigned short color);
 
-static void sglFillFlatBottomTriangle(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color);
+static void sgl_fill_flat_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color);
 
-static void sglFillFlatTopTriangle(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color);
+static void sgl_fill_flat_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color);
 
 /********************************
  *      Public SGL API          *
  ********************************/
 
-void sglSwapBuffers() {
-    xvSwapBuffers();
+void sgl_swap_buffers() {
+    xv_swap_buffers();
 }
 
-void sglClear(unsigned short color) {
-    xvclroffscreen(color);
+void sgl_clear(unsigned short color) {
+    xv_clr_offscreen(color);
 }
 
-void sglPutPixel(int x, int y, unsigned short color) {
-    xvPlotPixelf(x, y, color);
+void sgl_put_pixel(int x, int y, unsigned short color) {
+    xv_plot_pixelf(x, y, color);
 }
 
-void sglDrawLine(int x0, int y0, int x1, int y1, unsigned short color) {
+void sgl_draw_line(int x0, int y0, int x1, int y1, unsigned short color) {
     int dx = x1 - x0;
     int dy = y1 - y0;
 
@@ -52,22 +52,22 @@ void sglDrawLine(int x0, int y0, int x1, int y1, unsigned short color) {
     float y = y0;
 
     for (int i = 0; i < step; ++i) {
-        sglPutPixel(round(x), round(y), color);
+        sgl_put_pixel(round(x), round(y), color);
         
         x += xinc;
         y += yinc;
     }
 }
 
-void sglDrawRect(int x, int y, int width, int height, unsigned short color) {
+void sgl_draw_rect(int x, int y, int width, int height, unsigned short color) {
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
-            sglPutPixel(x+i, y+j, color);
+            sgl_put_pixel(x+i, y+j, color);
         }
     }
 }
 
-void sglDrawCircle(int xc, int yc, int r, unsigned short color) {
+void sgl_draw_circle(int xc, int yc, int r, unsigned short color) {
     int x = 0, y = r; 
     int d = 3 - 2 * r;
 
@@ -93,10 +93,10 @@ void sglDrawCircle(int xc, int yc, int r, unsigned short color) {
     }
 }
 
-void sglDrawTri(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color) {
-    sglDrawLine(x0, y0, x1, y1, color);
-    sglDrawLine(x1, y1, x2, y2, color);
-    sglDrawLine(x2, y2, x0, y0, color);
+void sgl_draw_tri(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color) {
+    sgl_draw_line(x0, y0, x1, y1, color);
+    sgl_draw_line(x1, y1, x2, y2, color);
+    sgl_draw_line(x2, y2, x0, y0, color);
 }
 
 /**
@@ -122,7 +122,7 @@ void sglDrawTri(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short c
 *                         (x2,y2)
 *
 */
-void sglDrawFilledTri(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color) {
+void sgl_draw_filled_tri(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color) {
     if (y0 > y1) {
         swap(y0, y1);
         swap(x0, x1);
@@ -140,20 +140,20 @@ void sglDrawFilledTri(int x0, int y0, int x1, int y1, int x2, int y2, unsigned s
 
     if (y1 == y2) {
         // Draw flat-bottom triangle
-        sglFillFlatBottomTriangle(x0, y0, x1, y1, x2, y2, color);
+        sgl_fill_flat_bottom_triangle(x0, y0, x1, y1, x2, y2, color);
     } else if (y0 == y1) {
         // Draw flat-top triangle
-        sglFillFlatTopTriangle(x0, y0, x1, y1, x2, y2, color);
+        sgl_fill_flat_top_triangle(x0, y0, x1, y1, x2, y2, color);
     } else {
         // Calculate the new vertex (Mx,My) using triangle similarity
         int My = y1;
         int Mx = (((x2 - x0) * (y1 - y0)) / (y2 - y0)) + x0;
 
         // Draw flat-bottom triangle
-        sglFillFlatBottomTriangle(x0, y0, x1, y1, Mx, My, color);
+        sgl_fill_flat_bottom_triangle(x0, y0, x1, y1, Mx, My, color);
 
         // Draw flat-top triangle
-        sglFillFlatTopTriangle(x1, y1, Mx, My, x2, y2, color);
+        sgl_fill_flat_top_triangle(x1, y1, Mx, My, x2, y2, color);
     }
 }
 
@@ -170,20 +170,20 @@ void sglDrawFilledTri(int x0, int y0, int x1, int y1, int x2, int y2, unsigned s
 *  (x1,y1)------(x2,y2)
 *
 */
-void sglFillFlatBottomTriangle(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color) {
+void sgl_fill_flat_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color) {
     // Inverse slope because we're calculating the x changes with respect to y
-    float invSlope1 = (float)(x1 - x0) / (y1 - y0);
-    float invSlope2 = (float)(x2 - x0) / (y2 - y0);
+    float inv_slope1 = (float)(x1 - x0) / (y1 - y0);
+    float inv_slope2 = (float)(x2 - x0) / (y2 - y0);
 
     // Start x_start and x_end from the top vertex (x0,y0)
-    float xStart = x0;
-    float xEnd = x0;
+    float xstart = x0;
+    float xend = x0;
 
     // Loop all the scanlines from top to bottom
     for (int y = y0; y <= y2; ++y) {
-        sglDrawLine(xStart, y, xEnd, y, color);
-        xStart += invSlope1;
-        xEnd += invSlope2;
+        sgl_draw_line(xstart, y, xend, y, color);
+        xstart += inv_slope1;
+        xend += inv_slope2;
     }
 }
 
@@ -201,29 +201,29 @@ void sglFillFlatBottomTriangle(int x0, int y0, int x1, int y1, int x2, int y2, u
 *        (x2,y2)
 *
 */
-void sglFillFlatTopTriangle(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color) {
-    float invSlope1 = (float)(x2 - x0) / (y2 - y0);
-    float invSlope2 = (float)(x2 - x1) / (y2 - y1);
+void sgl_fill_flat_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2, unsigned short color) {
+    float inv_slope1 = (float)(x2 - x0) / (y2 - y0);
+    float inv_slope2 = (float)(x2 - x1) / (y2 - y1);
 
     // Start x_start and x_end from the top vertex (x0,y0)
-    float xStart = x2;
-    float xEnd = x2;
+    float xstart = x2;
+    float xend = x2;
 
     // Loop all the scanlines from top to bottom
     for (int y = y2; y >= y0; --y) {
-        sglDrawLine(xStart, y, xEnd, y, color);
-        xStart -= invSlope1;
-        xEnd -= invSlope2;
+        sgl_draw_line(xstart, y, xend, y, color);
+        xstart -= inv_slope1;
+        xend -= inv_slope2;
     }
 }
 
 void circle(int xc, int yc, int x, int y, unsigned short color) {
-    sglPutPixel(xc+x, yc+y, color); 
-    sglPutPixel(xc-x, yc+y, color); 
-    sglPutPixel(xc+x, yc-y, color); 
-    sglPutPixel(xc-x, yc-y, color); 
-    sglPutPixel(xc+y, yc+x, color); 
-    sglPutPixel(xc-y, yc+x, color); 
-    sglPutPixel(xc+y, yc-x, color); 
-    sglPutPixel(xc-y, yc-x, color); 
+    sgl_put_pixel(xc+x, yc+y, color); 
+    sgl_put_pixel(xc-x, yc+y, color); 
+    sgl_put_pixel(xc+x, yc-y, color); 
+    sgl_put_pixel(xc-x, yc-y, color); 
+    sgl_put_pixel(xc+y, yc+x, color); 
+    sgl_put_pixel(xc-y, yc+x, color); 
+    sgl_put_pixel(xc+y, yc-x, color); 
+    sgl_put_pixel(xc-y, yc-x, color); 
 }
